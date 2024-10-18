@@ -79,6 +79,7 @@ def check_for_updates():
     else:
         old_table = None
 
+    print(old_table)
     # Compare the new data with the old data
     if old_table != new_table:
         send_push_notification(new_table)
