@@ -3,7 +3,7 @@ name: Check H-1B Availability
 on:
   schedule:
     # Run every 5 minutes
-    - cron: '*/5 * * * *'
+    - cron: "*/5 * * * *"
   workflow_dispatch:
 
 jobs:
