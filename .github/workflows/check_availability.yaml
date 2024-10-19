@@ -19,11 +19,12 @@ jobs:
         python-version: '3.x'
 
     - name: Cache last_table.txt
-      id: cache-table
       uses: actions/cache@v3
       with:
         path: last_table.txt 
-        key: cache-h1b-availability-table
+        key: ${{ runner.os }}-h1b-availability-table-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-h1b-availability-table-
 
     - name: Install dependencies
       run: |
@@ -37,8 +38,18 @@ jobs:
       run: |
         python main.py
 
-    - name: Upload cached table
-      if: success()
+    - name: Update cache if file changed
       run: |
-        # Only update cache if the job succeeds
-        echo "Caching new table state"
+        if [ -f last_table.txt ] && [ "$(git status --porcelain last_table.txt)" ]; then
+          echo "File changed, updating cache"
+          echo "${{ runner.os }}-h1b-availability-table-${{ github.sha }}" > last_table_cache_key
+        else
+          echo "No changes to last_table.txt"
+        fi
+
+    - name: Cache last_table.txt (update)
+      uses: actions/cache@v3
+      if: hashFiles('last_table_cache_key') != ''
+      with:
+        path: last_table.txt 
+        key: ${{ runner.os }}-h1b-availability-table-${{ github.sha }}

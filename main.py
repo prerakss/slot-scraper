@@ -89,7 +89,6 @@ def check_for_updates():
     else:
         old_table = None
 
-    print(old_table)
     # Compare the new data with the old data and check if appointments > 0
     if old_table != new_table and any(int(line.split("Appointments: ")[1]) > 0 for line in new_table.split('\n') if line):
         send_push_notification(new_table)
@@ -97,6 +96,9 @@ def check_for_updates():
         # Save the new data to the file
         with open('last_table.txt', 'w') as file:
             file.write(new_table)
+        print("Data changed. Notification sent and file updated.")
+    else:
+        print("No significant changes or no available appointments. No notification sent.")
 
 if __name__ == "__main__":
     check_for_updates()
